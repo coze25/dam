@@ -1,0 +1,67 @@
+//Gradle Scripts > libs.version.toml
+[versions]
+...
+roomVersion = "2.6.1"
+
+[libraries]
+...
+room-common = { group = "androidx.room", name = "room-common", version.ref = "roomVersion" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
+
+
+------------------------------------------------
+
+//Gradle Scripts > build.gradle (Module:app)
+dependencies{
+
+implementation libs.room.common
+implementation libs.room.runtime
+annotationProcessor libs.room.compiler
+
+...
+
+}
+// => sync now
+
+// package nou => database
+// insert DatabaseManager class
+// Adaugam Interface ExpenseDao
+// Adaugam Class ExpenseService
+// @Entity la clasa (de exemplu: Expense; @Entity(tableName = "expenses") )
+//	si adaugam private long id;  cu @PrimaryKey(autoGenerate=true) deasupra & dupa constructor cu toti parametrii
+// punem @TypeConverter deasupra la metodele din DatabaseManager si dupa in DatabaseManager @TypeConverters({DateConverter.class})
+// punem @Ignore in clasa Expense deasupra la constructorii pe care nu ii foloseste => rebuild
+
+// Main Activity:
+// 	OnCreate:
+labService = new LabService(getApplicationContext());
+labService.getAll(getAllCallback());
+
+//	In afara OnCreate:
+private LabService labService;
+
+private Callback<List<Lab>> getAllCallback() {
+        return result -> {
+            if (result != null) {
+                labs.addAll(result);
+                notifyAdapter();
+            }
+        };
+    }
+
+private Callback<Lab> insertCallback() {
+        return result -> {
+            if (result != null) {
+                labs.add(result);
+            }
+        };
+    }
+
+private void notifyAdapter() {
+        LabAdapter adapter = (LabAdapter) lvLabs.getAdapter();
+        adapter.notifyDataSetChanged();
+    }
+
+
+/ View > Tool Windows > App Inspection
